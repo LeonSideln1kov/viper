@@ -1,10 +1,18 @@
 package main
 
+
 import (
 	"fmt"
 	"os"
 	"os/exec"
 )
+
+
+const (
+    venvDir    = ".venv"
+    minPython  = "3.10"
+)
+
 
 func main() {
 	if len(os.Args) < 2 {
@@ -22,15 +30,27 @@ func main() {
 }
 
 func createVenv() {
-	cmd := exec.Command("python3", "-m", "venv", ".venv")
-	if _, err_check := os.Stat(".venv"); os.IsNotExist(err_check) {
+	pythonPath, err := findPython()
+	if err != nil {
+		fmt.Println("Error:", err)
+		fmt.Printf("VIPERs requires Python %s+ to create virtual environments\n", minPython)
+		os.Exit(1)
+	}
+
+	if _, err_check := os.Stat(venvDir); os.IsNotExist(err_check) {
+		cmd := exec.Command(pythonPath, "-m", "venv", venvDir)
+	
 		output, err_exec := cmd.CombinedOutput()
 		if err_exec != nil {
-			panic(err_exec)
+			fmt.Printf("Failed to create virtual environment:\n")
+            fmt.Printf("Command: %s\n", cmd.String())
+            fmt.Printf("Output:\n%s\n", output)
+            fmt.Printf("Error Details: %v\n", err)
+            os.Exit(1)
 		}
-		fmt.Println(string(output))
+		fmt.Println("Virtual environment created successfully")
 	} else {
-		fmt.Println(".venv already exists")
+		fmt.Printf("Directory %s already exists\n", venvDir)
 	}
 }
 
@@ -42,4 +62,20 @@ func printHelp() {
 	fmt.Println("  help     Show help")
 	// fmt.Println("  install  Install packages")
 	// fmt.Println("  lock     Generate lock file")
+}
+
+
+func findPython() (string, error) {
+    versions := []string{
+        "python3.13", "python3.12", "python3.11", "python3.10", 
+        "python3", "python", "py",
+    }
+    
+    for _, ver := range versions {
+        path, err := exec.LookPath(ver)
+        if err == nil {
+            return path, nil
+        }
+    }
+    return "", fmt.Errorf("no Python installation found")
 }
