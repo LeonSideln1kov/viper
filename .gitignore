@@ -1,8 +1,11 @@
 # ignore builded app
-vipers
+
 
 # ignore .env
 .env
 
-#ignore log files 
+# ignore log files 
 *.log
+
+# ignore .toml
+*.toml
