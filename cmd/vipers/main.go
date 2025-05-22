@@ -35,7 +35,8 @@ func printHelp() {
 	fmt.Println("  venv     Create virtual environment")
 	fmt.Println("  help     Show help")
 	fmt.Println("  install  Install packages")
-	// fmt.Println("  lock     Generate lock file")
+	fmt.Println("  lock     Generate lock file")
+	fmt.Println("  sync     Install from lock file")
 }
 
 func installPackages() error{
