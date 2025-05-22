@@ -43,9 +43,18 @@ func CreateVenv() {
 }
 
 
-func PipPath() string {
+func PipPath() (string, error) {
+	var path string
+
     if runtime.GOOS == "windows" {
-        return filepath.Join(venvDir, "Scripts", "pip.exe")
+        path = filepath.Join(venvDir, "Scripts", "pip.exe") 
+    } else {
+		path = filepath.Join(venvDir, "bin", "pip")
+	}
+    
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+        return "", fmt.Errorf("pip not found in virtual environment")
     }
-    return filepath.Join(venvDir, "bin", "pip")
+
+	return path, nil
 }
