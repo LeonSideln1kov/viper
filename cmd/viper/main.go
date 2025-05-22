@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	venv "github.com/LeonSideln1kov/vipers/internal/venv"
-	// python "github.com/LeonSideln1kov/vipers/internal/python"
-	config "github.com/LeonSideln1kov/vipers/internal/config"
+	venv "github.com/LeonSideln1kov/viper/internal/venv"
+	// python "github.com/LeonSideln1kov/viper/internal/python"
+	config "github.com/LeonSideln1kov/viper/internal/config"
 )
 
 
@@ -24,13 +24,14 @@ func main() {
 		venv.CreateVenv()
 	case "install", "--install", "-i":
 		installPackages()
+	case "lock", "--lock", "-l":
+		generateLock()
 	}
-
 }
 
 
 func printHelp() {
-	fmt.Println("VIPERs - Virtual Python Environment Resolver and Simplified Python Package Manager")
+	fmt.Println("VIPER - Virtual Python Environment Resolver and Simplified Python Package Manager")
 	fmt.Println("Commands:")
 	fmt.Println("  venv     Create virtual environment")
 	fmt.Println("  help     Show help")
@@ -60,4 +61,9 @@ func installPackages() error{
         }
     }
 	return nil
+}
+
+
+func generateLock() {
+	return
 }
