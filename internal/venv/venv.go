@@ -21,7 +21,7 @@ func CreateVenv() {
 	pythonPath, err := python.FindPython()
 	if err != nil {
 		fmt.Println("Error:", err)
-		fmt.Printf("VIPERs requires Python %s+ to create virtual environments\n", minPython)
+		fmt.Printf("VIPER requires Python %s+ to create virtual environments\n", minPython)
 		os.Exit(1)
 	}
 
