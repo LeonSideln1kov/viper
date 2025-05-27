@@ -34,7 +34,7 @@ func ResolveVersion(pkg string) (string, error) {
     // Get PyPI versions
     info, err := pypi.GetPackageInfo(name)
 	if err != nil {
-		fmt.Errorf(err)
+		panic(err)
 	}
     
     // Find latest matching version

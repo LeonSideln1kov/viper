@@ -8,7 +8,8 @@ import (
 	"github.com/LeonSideln1kov/viper/internal/venv"
 	// python "github.com/LeonSideln1kov/viper/internal/python"
 	"github.com/LeonSideln1kov/viper/internal/config"
-	"github.com/LeonSideln1kov/viper/internal/resolver" 
+	"github.com/LeonSideln1kov/viper/internal/resolver"
+	"github.com/LeonSideln1kov/viper/internal/pypi"
 )
 
 
@@ -68,7 +69,14 @@ func installPackages() error{
 
 
 func generateLock() {
-	
+	cfg, err := config.Load()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	for _, pkg := range cfg.Project.Dependencies {
+		fmt.Println(pypi.GetPackageInfo(pkg))
+	}
 }
 
 
