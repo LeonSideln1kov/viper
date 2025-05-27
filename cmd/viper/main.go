@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	venv "github.com/LeonSideln1kov/viper/internal/venv"
+	"github.com/LeonSideln1kov/viper/internal/venv"
 	// python "github.com/LeonSideln1kov/viper/internal/python"
-	config "github.com/LeonSideln1kov/viper/internal/config"
+	"github.com/LeonSideln1kov/viper/internal/config"
+	"github.com/LeonSideln1kov/viper/internal/resolver" 
 )
 
 
@@ -26,6 +27,8 @@ func main() {
 		installPackages()
 	case "lock", "--lock", "-l":
 		generateLock()
+	case "sync", "--sync", "-s":
+		syncWithLock()
 	}
 }
 
@@ -36,7 +39,7 @@ func printHelp() {
 	fmt.Println("  venv     Create virtual environment")
 	fmt.Println("  help     Show help")
 	fmt.Println("  install  Install packages")
-	fmt.Println("  lock     Generate lock file")
+	fmt.Println("  lock     Generate/update lock file")
 	fmt.Println("  sync     Install from lock file")
 }
 
@@ -65,5 +68,10 @@ func installPackages() error{
 
 
 func generateLock() {
+	
+}
+
+
+func syncWithLock() {
 	return
 }
