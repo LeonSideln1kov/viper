@@ -6,10 +6,8 @@ import (
 	"os"
 	"os/exec"
 	"github.com/LeonSideln1kov/viper/internal/venv"
-	// python "github.com/LeonSideln1kov/viper/internal/python"
 	"github.com/LeonSideln1kov/viper/internal/config"
 	"github.com/LeonSideln1kov/viper/internal/resolver"
-	"github.com/LeonSideln1kov/viper/internal/pypi"
 )
 
 
@@ -75,7 +73,7 @@ func generateLock() {
 	}
 
 	for _, pkg := range cfg.Project.Dependencies {
-		fmt.Println(pypi.GetPackageInfo(pkg))
+		fmt.Println(resolver.ResolveVersion(pkg))
 	}
 }
 

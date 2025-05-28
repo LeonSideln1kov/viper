@@ -3,8 +3,8 @@ package resolver
 import (
 	"fmt"
 	"strings"
-	"github.com/Masterminds/semver/v3"
 	"github.com/LeonSideln1kov/viper/internal/pypi"
+	"github.com/Masterminds/semver/v3"
 )
 
 
@@ -34,7 +34,7 @@ func ResolveVersion(pkg string) (string, error) {
     // Get PyPI versions
     info, err := pypi.GetPackageInfo(name)
 	if err != nil {
-		panic(err)
+		return "", fmt.Errorf("failed to get package info: %w", err)
 	}
     
     // Find latest matching version
@@ -45,9 +45,13 @@ func ResolveVersion(pkg string) (string, error) {
             continue // Skip invalid/pre-release versions
         }
         
-        if constraint.Check(ver) && ver.GreaterThan(latest) {
+        if latest != nil && constraint.Check(ver) && ver.GreaterThan(latest) {
             latest = ver
         }
+    }
+
+	if latest == nil {
+        return "", fmt.Errorf("no valid versions found for %s", pkg)
     }
     
     return latest.String(), nil

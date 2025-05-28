@@ -7,7 +7,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
-	python "github.com/LeonSideln1kov/viper/internal/python"
+	"github.com/LeonSideln1kov/viper/internal/python"
 )
 
 
