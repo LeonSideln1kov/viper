@@ -1,4 +1,4 @@
-module cmd/viper
+module github.com/LeonSideln1kov/viper
 
 go 1.24.3
 
