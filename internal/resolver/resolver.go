@@ -30,28 +30,27 @@ func parseSpec(pkg string) (string, *semver.Constraints){
 func ResolveVersion(pkg string) (string, error) {
     // Parse package spec (requests>=2.0.0)
     name, constraint := parseSpec(pkg)
-    
+
     // Get PyPI versions
     info, err := pypi.GetPackageInfo(name)
 	if err != nil {
 		return "", fmt.Errorf("failed to get package info: %w", err)
 	}
-    
+
     // Find latest matching version
-    var latest *semver.Version
+	// TODO think how to get minimal version (may be write parser)
+    latest, _ := semver.NewVersion("0.0.0")
     for v := range info.Releases {
         ver, err := semver.NewVersion(v)
         if err != nil || ver.Prerelease() != "" {
             continue // Skip invalid/pre-release versions
         }
         
-        if latest != nil && constraint.Check(ver) && ver.GreaterThan(latest) {
+        if constraint.Check(ver) && ver.GreaterThan(latest) || constraint == nil {
             latest = ver
+			fmt.Println("*******")
+			fmt.Println(latest, ver)
         }
-    }
-
-	if latest == nil {
-        return "", fmt.Errorf("no valid versions found for %s", pkg)
     }
     
     return latest.String(), nil
