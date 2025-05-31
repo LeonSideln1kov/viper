@@ -9,6 +9,7 @@ import (
 
 	"github.com/LeonSideln1kov/viper/internal/config"
 	"github.com/LeonSideln1kov/viper/internal/resolver"
+	
 	"github.com/LeonSideln1kov/viper/internal/venv"
 	"github.com/pelletier/go-toml/v2"
 )
@@ -72,7 +73,7 @@ func installPackages() error{
 func generateLock() error {
 	cfg, err := config.Load()
 	if err != nil {
-		return fmt.Errorf("Config error: %w", err)
+		return fmt.Errorf("config error: %w", err)
 	}
 
 	lockData := struct {
@@ -119,5 +120,5 @@ func generateLock() error {
 
 
 func syncWithLock() {
-	return
+	SyncFromLock()
 }
