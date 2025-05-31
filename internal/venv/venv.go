@@ -58,3 +58,22 @@ func PipPath() (string, error) {
 
 	return path, nil
 }
+
+
+func PythonPath() (string, error) {
+	var path string
+
+	switch runtime.GOOS {
+	case "windows":
+		path = filepath.Join(venvDir, "Scripts", "python.exe")
+	default: // Unix-like systems (linux, darwin, etc.)
+		path = filepath.Join(venvDir, "bin", "python")
+	}
+
+	// Verify the file actually exists
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return "", fmt.Errorf("virtual environment not found at %s", path)
+	}
+
+	return path, nil
+}

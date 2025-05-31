@@ -1,13 +1,16 @@
 package main
 
-
 import (
 	"fmt"
 	"os"
 	"os/exec"
-	"github.com/LeonSideln1kov/viper/internal/venv"
+	"strings"
+	"time"
+
 	"github.com/LeonSideln1kov/viper/internal/config"
 	"github.com/LeonSideln1kov/viper/internal/resolver"
+	"github.com/LeonSideln1kov/viper/internal/venv"
+	"github.com/pelletier/go-toml/v2"
 )
 
 
@@ -66,15 +69,52 @@ func installPackages() error{
 }
 
 
-func generateLock() {
+func generateLock() error {
 	cfg, err := config.Load()
 	if err != nil {
-		fmt.Println(err)
+		return fmt.Errorf("Config error: %w", err)
 	}
 
+	lockData := struct {
+		Metadata struct {
+			ViperVersion string `toml:"viper-version"`
+			PythonVersion string `toml:"python-version"`
+			GeneratedAt string `toml:"generated-ad"`
+		}`toml:"metadata"`
+		Packages map[string]string `toml:"packages"`
+	}{}
+	
+	// TODO get from cfg
+	lockData.Metadata.ViperVersion = "0.1.0"
+	lockData.Metadata.GeneratedAt = time.Now().UTC().Format(time.RFC3339)
+
+	// TODO raise error if python or .venv havn't been found  
+	pyPath, _ := venv.PythonPath()
+	cmd := exec.Command(pyPath, "--version")
+    out, _ := cmd.CombinedOutput()
+    lockData.Metadata.PythonVersion = strings.TrimSpace(string(out))
+
+	lockData.Packages = make(map[string]string)
+
 	for _, pkg := range cfg.Project.Dependencies {
-		fmt.Println(resolver.ResolveVersion(pkg))
+		name, ver, err := resolver.ResolveVersion(pkg)
+		if err != nil {
+			panic(err)
+		}
+		lockData.Packages[name] = ver
 	}
+
+	data, err := toml.Marshal(lockData)
+	if err != nil {
+		return fmt.Errorf("TOML encoding error: %w", err)
+	}
+
+	if err := os.WriteFile("viper.lock", data, 0644); err != nil {
+		return fmt.Errorf("file write error: %w", err)
+	}
+
+	fmt.Println("Lock file generated: viper.lock")
+    return nil
 }
 
 

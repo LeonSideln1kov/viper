@@ -1,5 +1,6 @@
 # ignore builded app
 /cmd/vipers/vipers
+main
 
 # ignore .env
 .env
