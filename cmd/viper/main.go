@@ -9,7 +9,7 @@ import (
 
 	"github.com/LeonSideln1kov/viper/internal/config"
 	"github.com/LeonSideln1kov/viper/internal/resolver"
-	
+	"github.com/LeonSideln1kov/viper/internal/sync"
 	"github.com/LeonSideln1kov/viper/internal/venv"
 	"github.com/pelletier/go-toml/v2"
 )
@@ -120,5 +120,5 @@ func generateLock() error {
 
 
 func syncWithLock() {
-	SyncFromLock()
+	sync.SyncFromLock("viper.lock")
 }
