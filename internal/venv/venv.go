@@ -3,6 +3,8 @@ package venv
 
 import (
 	"fmt"
+	"bytes"
+	"time"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -76,4 +78,30 @@ func PythonPath() (string, error) {
 	}
 
 	return path, nil
+}
+
+
+func InstallPackage(pkg string, version string) error {
+    pipPath, err := PipPath()
+    if err != nil {
+        return fmt.Errorf("venv pip missing: %w", err)
+    }
+	
+    cmd := exec.Command(pipPath, "install", pkg)
+	var outBuf, errBuf bytes.Buffer
+	cmd.Stdout = &outBuf
+	cmd.Stderr = &errBuf
+	
+	start := time.Now()
+	err = cmd.Run()
+	duration := time.Since(start).Round(time.Millisecond)
+	if err != nil {
+		fmt.Printf("🚨 Installation failed for %s (after %s)\n", pkg, duration)
+		fmt.Printf("=== STDOUT ===\n%s\n", outBuf.String())
+		fmt.Printf("=== STDERR ===\n%s\n", errBuf.String())
+		return fmt.Errorf("pip install failed: %w", err)
+	}
+
+	fmt.Printf("✅ %s installed in %s\n", pkg , duration)
+	return nil
 }

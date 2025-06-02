@@ -2,6 +2,8 @@ package sync
 
 import (
 	"fmt"
+	"bytes"
+	"time"
 	"os"
 	"os/exec"
 	"github.com/LeonSideln1kov/viper/internal/venv"
@@ -33,14 +35,23 @@ func SyncFromLock(lockPath string) error {
 	for pkg, version := range lock.Packages {
 		spec := fmt.Sprintf("%s==%s", pkg, version)
 		cmd := exec.Command(pipPath, "install", "--force-reinstall", "-v", spec)
-        cmd.Stdout = os.Stdout
-        cmd.Stderr = os.Stderr
+        
+		var outBuf, errBuf bytes.Buffer
+		cmd.Stdout = &outBuf
+		cmd.Stderr = &errBuf
 
-		if err := cmd.Run(); err != nil {
-            return fmt.Errorf("failed to install %s: %w", spec, err)
+		start := time.Now()
+		err := cmd.Run()
+		duration := time.Since(start).Round(time.Millisecond)
+
+		if err != nil {
+            fmt.Printf("🚨 Installation failed for %s (after %s)\n", spec, duration)
+			fmt.Printf("=== STDOUT ===\n%s\n", outBuf.String())
+			fmt.Printf("=== STDERR ===\n%s\n", errBuf.String())
+			return fmt.Errorf("pip install failed: %w", err)
         }
-
-		fmt.Printf("✅ Installed %s@%s\n", pkg, version)
+		
+		fmt.Printf("✅ %s installed in %s\n", spec, duration)
 	}
 
 	return nil
