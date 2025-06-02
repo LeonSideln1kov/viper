@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"github.com/LeonSideln1kov/viper/internal/venv"
 	"github.com/pelletier/go-toml/v2"
 )

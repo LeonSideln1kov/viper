@@ -10,13 +10,16 @@ import (
 
 
 func parseSpec(pkg string) (string, *semver.Constraints){
-	operators := []string{"==", ">=", "<=", "!=", "~", ">", "<"}
+	operators := []string{"==", ">=", "<=", "!=", "~=", ">", "<"}
 
 	// Redesign cause in some cases ppl use ~= instead of ~ 
 	// So its better to support both variants 
 	for _, op := range operators {
 		if strings.Contains(pkg, op) {
 			parts := strings.SplitN(pkg, op, 2)
+			if op == "~=" {
+			op = "~"
+			}
 			constraint, err := semver.NewConstraint(fmt.Sprintf("%s %s", op, strings.TrimSpace(parts[1])))
 			if err != nil {
 				return pkg, nil
