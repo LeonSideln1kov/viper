@@ -32,6 +32,8 @@ func main() {
 		generateLock()
 	case "sync", "--sync", "-s":
 		syncWithLock()
+	default:
+		fmt.Println("unknown option was given: ", os.Args[1])
 	}
 }
 
@@ -49,15 +51,16 @@ func printHelp() {
 func installPackages() error{
 	cfg, err := config.Load()
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("no config found: ", err)
+		return fmt.Errorf("no config found: %w", err)
 	}
 	
-    if err != nil {
-        return fmt.Errorf("venv pip missing: %w", err)
-    }
-	
 	for _, pkg := range cfg.Project.Dependencies {
-		venv.InstallPackage(pkg)
+		err = venv.InstallPackage(pkg)
+		if err != nil {
+			fmt.Println(err)
+			return fmt.Errorf("venv pip missing: %w", err)
+		}
     }
 	return nil
 }
@@ -73,7 +76,7 @@ func generateLock() error {
 		Metadata struct {
 			ViperVersion string `toml:"viper-version"`
 			PythonVersion string `toml:"python-version"`
-			GeneratedAt string `toml:"generated-ad"`
+			GeneratedAt string `toml:"generated-at"`
 		}`toml:"metadata"`
 		Packages map[string]string `toml:"packages"`
 	}{}
@@ -113,5 +116,8 @@ func generateLock() error {
 
 
 func syncWithLock() {
-	sync.SyncFromLock("viper.lock")
+	err := sync.SyncFromLock("viper.lock")
+	if err != nil {
+		fmt.Println(err)
+	}
 }

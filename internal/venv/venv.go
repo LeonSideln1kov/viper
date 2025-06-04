@@ -81,12 +81,12 @@ func PythonPath() (string, error) {
 }
 
 
-func InstallPackage(pkg string, version string) error {
+func InstallPackage(pkg string) error {
     pipPath, err := PipPath()
     if err != nil {
         return fmt.Errorf("venv pip missing: %w", err)
     }
-	
+
     cmd := exec.Command(pipPath, "install", pkg)
 	var outBuf, errBuf bytes.Buffer
 	cmd.Stdout = &outBuf
